@@ -1,4 +1,28 @@
-# What do want?
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-storage-pv
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  local:
+    path: /mnt
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - node1-virtualbox  # Replace with your actual node name
+---
+# How do we want it implemented
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -10,18 +34,3 @@ spec:
   resources:
     requests:
       storage: 5Gi
----
-# How do we want it implemented
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: local-storage
-  labels:
-    type: local
-spec:
-  capacity:
-    storage: 5Gi
-  accessModes:
-    - ReadWriteOnce
-  local:
-    path: /mnt
